@@ -9,6 +9,8 @@ dnl AC_CONFIG_SRCDIR([src/])
 
 # ------------------- option parsing -------------------------------
 
+echo "WIN32: $WIN32"
+
 DEBUG=
 CHECKMEM=
 PROFILING=
@@ -74,6 +76,10 @@ else
     CFLAGS="$WARNINGS -O -fomit-frame-pointer $CFLAGS"
     CXXFLAGS="$WARNINGS -O -fomit-frame-pointer $CXXFLAGS"
 fi
+fi
+if test "x$WIN32" '!=' "x";then
+   CFLAGS="-DWIN32=1 -D_WIN32=1 $CFLAGS"
+   CXXFLAGS="-DWIN32=1 -D_WIN32=1 $CXXFLAGS"
 fi
 
 CFLAGS="-fPIC $CFLAGS"

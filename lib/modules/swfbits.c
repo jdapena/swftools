@@ -33,6 +33,9 @@
 #include <ctype.h>
 
 #ifdef HAVE_JPEGLIB
+#ifdef WIN32
+#include <windows.h>
+#endif
 #define HAVE_BOOLEAN
 #ifdef __cplusplus
 extern "C" {

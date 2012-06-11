@@ -136,10 +136,12 @@ swfc$(E): parser.$(O) swfc.$(O) swfc-feedback.$(O) swfc-history.$(O) swfc-interp
 install:
 	$(mkinstalldirs) $(bindir)
 	$(mkinstalldirs) $(man1dir)
-	@for file in $(install_programs); do if test -f $$file;then $(INSTALL_BIN);$(INSTALL_MAN1);fi;done
-	
+	@for file in $(install_programs); do if test -f $$file;then $(INSTALL_BIN);fi;done
+	@for file in $(install_programs:$(E)=); do if test -f $$file$(E);then $(INSTALL_MAN1);fi;done
+
 uninstall:
-	@for file in $(install_programs); do $(UNINSTALL_BIN);$(UNINSTALL_MAN1);done
+	@for file in $(install_programs); do $(UNINSTALL_BIN);done
+	@for file in $(install_programs:$(E)=); do $(UNINSTALL_MAN1);done
 
 clean: 
 	rm -f *.o *.obj *.lo *.la *~ gmon.out

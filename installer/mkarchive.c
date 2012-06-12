@@ -285,7 +285,7 @@ int main (int argn, char*argv[])
     int t;
     char buf[320];
     int num = 0;
-
+    FILE*fi = NULL;
     int fullsize = 0;
     for(t=1;t<argn;t++)
     {
@@ -400,7 +400,7 @@ int main (int argn, char*argv[])
 	perror("do_lzma");
 	exit(1);
     }
-    FILE*fi = fopen("crnfiles.7z", "rb");
+    fi = fopen("crnfiles.7z", "rb");
     if(!fi) {
 	perror("crnfiles.7z");
 	exit(1);

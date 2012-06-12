@@ -31,7 +31,7 @@
 #include "utils.h"
 
 #ifdef ZLIB
-#include "../z/zlib.h"
+#include <zlib.h>
 #define ZLIB_BUFFER_SIZE 16384
 #else
 #include "lzma/LzmaDecode.h"
@@ -103,7 +103,8 @@ reader_t*reader_init_memreader(void*newdata, int newlength)
     r->internal = (void*)mr;
     r->pos = 0;
     return r;
-} 
+}
+#ifndef ZLIB
 /* ---------------------------- lzma reader -------------------------- */
 typedef struct
 {
@@ -172,6 +173,7 @@ reader_t* reader_init_lzma(void*mem, int len)
 
     return r;
 }
+#endif
 
 #ifdef ZLIB
 /* ---------------------------- zlibinflate reader -------------------------- */

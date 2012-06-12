@@ -7348,7 +7348,7 @@ fi
 
 if test -f "release.in"; then release_in="./release"; fi
 if test -f "Makefile.new.in"; then mk_in="./Makefile.new"; fi
-FILES="$release_in $mk_in Makefile.common ${avi2swf} Makefile lib/Makefile lib/action/Makefile src/Makefile ${pdf2swf_makefile} swfs/Makefile ${pythongfx} ${rubygfx} ${lame_makefile} lib/readers/Makefile"
+FILES="$release_in $mk_in Makefile.common ${avi2swf} Makefile lib/Makefile lib/action/Makefile src/Makefile ${pdf2swf_makefile} swfs/Makefile ${pythongfx} ${rubygfx} ${lame_makefile} lib/readers/Makefile installer/Makefile"
 ac_config_files="$ac_config_files ${FILES}"
 
 cat >confcache <<\_ACEOF

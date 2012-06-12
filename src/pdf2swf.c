@@ -882,7 +882,7 @@ int main(int argn, char *argv[])
 	    }
 	    if(preloader && !viewer) {
 		msg("<warning> --preloader option without --viewer option doesn't make very much sense.");
-		ret = systemf("swfcombine %s -Y %d -X %d %s/PreLoaderTemplate.swf loader=\"%s\" movie=\"%s\" -o \"%s\"",zip,width,height,
+		ret = systemf("swfcombine %s -Y %d -X %d \"%s/PreLoaderTemplate.swf\" loader=\"%s\" movie=\"%s\" -o \"%s\"",zip,width,height,
 			SWFDIR, preloader, outputname, outputname);
 		if(!system_quiet)
 		    printf("\n");
@@ -896,7 +896,7 @@ int main(int argn, char *argv[])
 #endif
 		systemf("swfcombine \"%s\" viewport=%s -o %s",
 			viewer, outputname, tmpname);
-		systemf("swfcombine %s -X %d -Y %d -r %f %s/PreLoaderTemplate.swf loader=%s movie=%s -o \"%s\"",zip,width,height,
+		systemf("swfcombine %s -X %d -Y %d -r %f \"%s/PreLoaderTemplate.swf\" loader=%s movie=%s -o \"%s\"",zip,width,height,
 			getRate(preloader), SWFDIR, preloader, tmpname, outputname);
 		systemf("rm %s", tmpname);
 	    }

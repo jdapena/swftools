@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <string.h>
+
 char* concatPaths(const char*base, const char*add)
 {
     int l1 = strlen(base);

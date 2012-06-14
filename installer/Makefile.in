@@ -14,7 +14,7 @@ files1.c: mkarchive uninstall.exe
 	cp swftools.bmp ../win32/
 	cp swftools.ico ../win32/
 	cd ../win32;../installer/mkarchive `find`
-	mv ../src/crnfiles.c ./files1.c
+	mv ../win32/crnfiles.c ./files1.c
 
 #files2.c: ../win32_gui/*.exe ../win32_gui/*.swf mkarchive uninstall.exe
 #	cp uninstall.exe ../win32_gui/

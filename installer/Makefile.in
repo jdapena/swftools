@@ -1,0 +1,83 @@
+
+LICENSE=gpl.c
+
+all: files1.exe uninstall.exe mkarchive
+
+LIBS=@LIBS@ -lgdi32 -lshlwapi -lcomctl32 -lshell32 -lole32 -luuid
+
+files1.c: mkarchive uninstall.exe
+	CWD=`pwd`
+	mkdir -p ../win32/swfs
+	cp uninstall.exe ../win32/
+	cp ../src/*.exe ../win32/
+	cp ../swfs/*.swf ../win32/swfs/
+	cp swftools.bmp ../win32/
+	cp swftools.ico ../win32/
+	cd ../win32;../installer/mkarchive `find`
+	mv ../src/crnfiles.c ./files1.c
+
+#files2.c: ../win32_gui/*.exe ../win32_gui/*.swf mkarchive uninstall.exe
+#	cp uninstall.exe ../win32_gui/
+#	CWD=`pwd`
+#	cd ../win32_gui;../installer/mkarchive `find`
+#	mv ../win32_gui/crnfiles.c ./files2.c
+
+%.obj: %.c
+	$(CC) -c $<
+
+mkarchive: mkarchive.c
+	gcc mkarchive.c -o mkarchive -DZLIB=1 -lz
+
+makegui: makegui.c
+	gcc makegui.c -o makegui
+
+crnfiles1.obj: crnfiles1.c
+#crnfiles2.o: crnfiles2.c
+
+#depack.o: depack.c depack.h Makefile
+#	$(CC) -c depack.c -o depack.o
+
+archive.obj: archive.c archive.c
+	$(CC) -c archive.c -o archive.obj -DZLIB=1 $(LIBS)
+
+utils.obj: utils.c utils.c
+	$(CC) -c utils.c -o utils.obj
+
+license.obj: $(LICENSE)
+	$(CC) -c $< -o license.obj
+
+files1.obj: files1.c
+	$(CC) -c files1.c -o files1.obj
+
+installer.obj: installer.c installer.h archive.h
+	$(CC) -c installer.c -o installer.obj
+
+uninstaller.obj: installer.c installer.h
+	$(CC) -DDEINSTALL -c installer.c -o uninstaller.obj
+
+installer.coff: installer.rc swftools.ico installer.h
+	$(WINDRES) installer.rc -O coff -F pe-i386 -o installer.coff
+
+lzma/LzmaDecode.obj: lzma/LzmaDecode.c lzma/LzmaDecode.h lzma/LzmaTypes.h
+	$(CC) -c lzma/LzmaDecode.c -o lzma/LzmaDecode.obj
+
+uninstall.exe: uninstaller.obj utils.obj installer.coff Makefile makegui
+	$(CC) uninstaller.obj utils.obj installer.coff -o $@ $(LIBS)
+	$(STRIP) $@
+	./makegui $@
+	#upx -9 --best $@ 2>/dev/null || true
+
+%.exe: %.obj installer.obj license.obj archive.obj utils.obj installer.coff Makefile makegui
+	$(CC) -static installer.obj license.obj utils.obj archive.obj installer.coff  $< -o $@ $(LIBS)
+	$(STRIP) $@
+	./makegui $@
+
+#installer.exe: installer.c depack.o archive.o depack.h crnfiles.o installer.coff Makefile
+#	$(CC) installer.c depack.o archive.o crnfiles.o installer.coff -o installer.exe $(LIBS)
+#	$(STRIP) installer.exe
+#	#./makegui installer.exe
+#	#upx -9 --best installer.exe 2>/dev/null || true
+
+clean:
+	rm -f files*exe crnfiles.c *.obj *.coff *.exe mkarchive makegui *.o
+

@@ -198,7 +198,9 @@ static int findSpace(gfxfont_t*font)
     int t;
     for(t=0;t<font->num_glyphs;t++) {
 	gfxglyph_t*g = &font->glyphs[t];
+#ifndef HAVE_POPPLER
 	if(GLYPH_IS_SPACE(g)) {
+#endif
 	    if(g->unicode == 32) {
 		/* now that we have found a space char, make sure it's unique */
 		int s;
@@ -208,7 +210,9 @@ static int findSpace(gfxfont_t*font)
 		}
 		return t;
 	    }
+#ifndef HAVE_POPPLER
 	}
+#endif
     }
     return -1;
 }

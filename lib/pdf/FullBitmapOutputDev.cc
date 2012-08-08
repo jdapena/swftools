@@ -43,6 +43,8 @@ static SplashColor splash_black = {0,0,0};
 FullBitmapOutputDev::FullBitmapOutputDev(InfoOutputDev*info, PDFDoc*doc, int*page2page, int num_pages, int x, int y, int x1, int y1, int x2, int y2)
 :CommonOutputDev(info, doc, page2page, num_pages, x, y, x1, y1, x2, y2)
 {
+    this->config_transparent = 0;
+
     this->doc = doc;
     this->xref = doc->getXRef();
     
@@ -74,6 +76,9 @@ void FullBitmapOutputDev::setDevice(gfxdevice_t*dev)
 
 void FullBitmapOutputDev::setParameter(const char*key, const char*value)
 {
+    if(!strcmp(key,"transparent")) {
+        this->config_transparent = atoi(value);
+    }
 }
 static void getBitmapBBox(Guchar*alpha, int width, int height, int*xmin, int*ymin, int*xmax, int*ymax)
 {
@@ -192,6 +197,20 @@ GBool FullBitmapOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
 
 void FullBitmapOutputDev::beginPage(GfxState *state, int pageNum)
 {
+    gfxcolor_t white = {255,255,255,255};
+    gfxline_t clippath[5];
+
+    clippath[0].type = gfx_moveTo;clippath[0].x = 0;     clippath[0].y = 0;      clippath[0].next = &clippath[1];
+    clippath[1].type = gfx_lineTo;clippath[1].x = width; clippath[1].y = 0;      clippath[1].next = &clippath[2];
+    clippath[2].type = gfx_lineTo;clippath[2].x = width; clippath[2].y = height; clippath[2].next = &clippath[3];
+    clippath[3].type = gfx_lineTo;clippath[3].x = 0;     clippath[3].y = height; clippath[3].next = &clippath[4];
+    clippath[4].type = gfx_lineTo;clippath[4].x = 0;     clippath[4].y = 0;      clippath[4].next = 0;
+
+    if(!config_transparent) {
+	msg("<debug> drawing white background");
+        dev->fill(dev, clippath, &white);
+    }
+
     msg("<debug> startPage");
     rgbdev->startPage(pageNum, state);
     gfxdev->startPage(pageNum, state);

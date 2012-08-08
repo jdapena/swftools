@@ -103,6 +103,7 @@ BitmapOutputDev::BitmapOutputDev(InfoOutputDev*info, PDFDoc*doc, int*page2page, 
     this->config_optimizeplaincolorfills = 0;
     this->config_skewedtobitmap = 0;
     this->config_alphatobitmap = 0;
+    this->config_transparent = 0;
     this->bboxpath = 0;
     //this->clipdev = 0;
     //this->clipstates = 0;
@@ -167,6 +168,8 @@ void BitmapOutputDev::setParameter(const char*key, const char*value)
        this->config_skewedtobitmap = atoi(value);
     } else if(!strcmp(key, "alphatobitmap")) {
        this->config_alphatobitmap = atoi(value);
+    } else if(!strcmp(key, "transparent")) {
+       this->config_transparent = atoi(value);
     }
 
     this->gfxdev->setParameter(key, value);
@@ -999,6 +1002,20 @@ GBool BitmapOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
 
 void BitmapOutputDev::beginPage(GfxState *state, int pageNum)
 {
+    gfxcolor_t white = {255,255,255,255};
+    gfxline_t clippath[5];
+
+    clippath[0].type = gfx_moveTo;clippath[0].x = 0;     clippath[0].y = 0;      clippath[0].next = &clippath[1];
+    clippath[1].type = gfx_lineTo;clippath[1].x = width; clippath[1].y = 0;      clippath[1].next = &clippath[2];
+    clippath[2].type = gfx_lineTo;clippath[2].x = width; clippath[2].y = height; clippath[2].next = &clippath[3];
+    clippath[3].type = gfx_lineTo;clippath[3].x = 0;     clippath[3].y = height; clippath[3].next = &clippath[4];
+    clippath[4].type = gfx_lineTo;clippath[4].x = 0;     clippath[4].y = 0;      clippath[4].next = 0;
+
+    if(!config_transparent) {
+	msg("<debug> drawing white background");
+        dev->fill(dev, clippath, &white);
+    }
+
     rgbdev->startPage(pageNum, state);
     boolpolydev->startPage(pageNum, state);
     booltextdev->startPage(pageNum, state);
